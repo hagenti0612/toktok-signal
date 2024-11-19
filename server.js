@@ -55,9 +55,7 @@ io.on('connection', (socket) => {
         caller: socket.id,
       });
     }
-	if (peerConnection.current) {
-    peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
-  }
+	
 	
   });
 
