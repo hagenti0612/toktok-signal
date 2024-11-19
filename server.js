@@ -29,22 +29,33 @@ io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
   socket.on('offer', (data) => {
-    console.log('Offer received:', data);
-    socket.to(data.target).emit('offer', data);
+    console.log('Offer received from:', socket.id);
+    console.log('Forwarding offer to:', data.target);
+    socket.to(data.target).emit('offer', {
+      sdp: data.sdp,
+      caller: socket.id,
+    });
   });
 
   socket.on('answer', (data) => {
-    console.log('Answer received:', data);
-    socket.to(data.target).emit('answer', data);
+    console.log('Answer received from:', socket.id);
+    console.log('Forwarding answer to:', data.target);
+    socket.to(data.target).emit('answer', {
+      sdp: data.sdp,
+      caller: socket.id,
+    });
   });
 
   socket.on('candidate', (data) => {
+    console.log('Candidate received from:', socket.id);
+    console.log('Forwarding candidate to:', data.target);
     socket.to(data.target).emit('candidate', data);
   });
 
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
   });
+  
 });
 
 const PORT = process.env.PORT || 3000;
