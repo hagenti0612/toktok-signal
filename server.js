@@ -48,12 +48,17 @@ io.on('connection', (socket) => {
 
   socket.on('candidate', (data) => {
     console.log('Candidate received from:', socket.id);
+	console.log('Received Candidate:', data);
     if (data.target) {
       socket.to(data.target).emit('candidate', {
         candidate: data.candidate,
         caller: socket.id,
       });
     }
+	if (peerConnection.current) {
+    peerConnection.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+  }
+	
   });
 
   socket.on('getUsers', () => {
