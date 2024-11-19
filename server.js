@@ -25,43 +25,43 @@ app.get('/', (req, res) => {
   res.send('Signaling Server is running.');
 });
 
+const connectedUsers = {};
+
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
+  connectedUsers[socket.id] = socket;
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
+    delete connectedUsers[socket.id];
+  });
 
   socket.on('offer', (data) => {
     console.log('Offer received from:', socket.id);
-    console.log('Forwarding offer to:', data.target);
-    socket.to(data.target).emit('offer', {
-      sdp: data.sdp,
-      caller: socket.id,
-    });
+    socket.to(data.target).emit('offer', { sdp: data.sdp, caller: socket.id });
   });
 
   socket.on('answer', (data) => {
     console.log('Answer received from:', socket.id);
-    console.log('Forwarding answer to:', data.target);
-    socket.to(data.target).emit('answer', {
-      sdp: data.sdp,
-      caller: socket.id,
-    });
+    socket.to(data.target).emit('answer', { sdp: data.sdp, caller: socket.id });
   });
 
   socket.on('candidate', (data) => {
+    console.log('Candidate received from:', socket.id);
     if (data.target) {
-      console.log('Forwarding candidate to:', data.target);
       socket.to(data.target).emit('candidate', {
         candidate: data.candidate,
         caller: socket.id,
       });
-    } else {
-      console.error('No target specified for candidate.');
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+  socket.on('getUsers', () => {
+    const userIds = Object.keys(connectedUsers).filter((id) => id !== socket.id);
+    socket.emit('userList', userIds);
   });
 });
+
 
 
 const PORT = process.env.PORT || 3000;
