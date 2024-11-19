@@ -29,17 +29,13 @@ io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
   socket.on('offer', (data) => {
-    socket.to(data.target).emit('offer', {
-      sdp: data.sdp,
-      caller: socket.id,
-    });
+    console.log('Offer received:', data);
+    socket.to(data.target).emit('offer', data);
   });
 
   socket.on('answer', (data) => {
-    socket.to(data.target).emit('answer', {
-      sdp: data.sdp,
-      caller: socket.id,
-    });
+    console.log('Answer received:', data);
+    socket.to(data.target).emit('answer', data);
   });
 
   socket.on('candidate', (data) => {
