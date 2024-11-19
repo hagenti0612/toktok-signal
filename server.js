@@ -47,16 +47,22 @@ io.on('connection', (socket) => {
   });
 
   socket.on('candidate', (data) => {
-    console.log('Candidate received from:', socket.id);
-    console.log('Forwarding candidate to:', data.target);
-    socket.to(data.target).emit('candidate', data);
+    if (data.target) {
+      console.log('Forwarding candidate to:', data.target);
+      socket.to(data.target).emit('candidate', {
+        candidate: data.candidate,
+        caller: socket.id,
+      });
+    } else {
+      console.error('No target specified for candidate.');
+    }
   });
 
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
   });
-  
 });
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
