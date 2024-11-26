@@ -30,6 +30,9 @@ app.get('/', (req, res) => {
 const connectedUsers = {};
 
 io.on('connection', (socket) => {
+  const userId = socket.id; // 소켓 ID를 유저 ID로 사용
+  socket.emit("yourId", userId); // 클라이언트에 유저 ID 전달
+  
   console.log('A user connected:', socket.id);
   connectedUsers[socket.id] = socket;
 
@@ -65,6 +68,7 @@ io.on('connection', (socket) => {
     const userIds = Object.keys(connectedUsers).filter((id) => id !== socket.id);
     socket.emit('userList', userIds);
   });
+  
 });
 
 
