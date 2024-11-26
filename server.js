@@ -7,7 +7,8 @@ const app = express();
 
 // CORS 설정
 app.use(cors({
-  origin: 'https://toktok-sub.netlify.app', // 허용할 클라이언트 도메인
+  //origin: 'https://toktok-sub.netlify.app', // 허용할 클라이언트 도메인
+  origin: ['https://toktokk.netlify.app','https://toktok-sub.netlify.app'],
   methods: ['GET', 'POST'], // 허용할 HTTP 메서드
   credentials: true, // 인증 정보(Credentials) 허용
 }));
@@ -15,7 +16,8 @@ app.use(cors({
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://toktok-sub.netlify.app', // WebSocket CORS 설정
+    //origin: 'https://toktok-sub.netlify.app', // WebSocket CORS 설정
+    origin: ['https://toktokk.netlify.app','https://toktok-sub.netlify.app'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -44,7 +46,6 @@ io.on('connection', (socket) => {
   socket.on('answer', (data) => {
     console.log('Answer received from:', socket.id);
     socket.to(data.target).emit('answer', { sdp: data.sdp, caller: socket.id });
-    
   });
 
   socket.on('candidate', (data) => {
